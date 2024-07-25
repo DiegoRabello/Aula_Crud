@@ -13,7 +13,7 @@ public class ClienteController {
 
     @GetMapping
     public String getAllClientes() {
-        if (Cliente.clientes.isEmpty()) {
+        if (!Cliente.clientes.isEmpty()) {
             return Cliente.clientes.toString();
 
         } else {
