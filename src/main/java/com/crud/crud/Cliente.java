@@ -1,25 +1,18 @@
 package com.crud.crud;
 
 import java.util.ArrayList;
-
+import java.util.UUID;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-@Getter
-@Setter
+@Data
 public class Cliente {
     public static ArrayList <Cliente> clientes = new ArrayList<Cliente>();
 
-    public static ArrayList<Cliente> getClientes() {
-        return clientes;
-    }
-    public static void setClientes(ArrayList<Cliente> clientes) {
-        Cliente.clientes = clientes;
-    }
+    private UUID id = UUID.randomUUID();
     private String nome;
     private String cpf;
     private Endereco endereco;
     private String email;
     private String dataNascimento;
+  
 
 }
