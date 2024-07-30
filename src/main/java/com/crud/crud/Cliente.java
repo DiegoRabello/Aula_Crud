@@ -26,6 +26,8 @@ public class Cliente {
     @JoinColumn(name = "endereco_id", referencedColumnName = "id")
     private Endereco endereco;
     
+    @Column(name = "telefon")
+    private String telefone;
     @Column(name = "Email",unique = true)
     private String email;
     
