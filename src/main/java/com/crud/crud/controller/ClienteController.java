@@ -42,7 +42,26 @@ public class ClienteController {
         Cliente clienteSalvo = clienteService.create(cliente);
         return ResponseEntity.ok(clienteSalvo);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente cliente) {
+        Cliente clienteExistente = clienteService.getById(id);
 
+        if (clienteExistente == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        clienteExistente.setNome(cliente.getNome());
+        clienteExistente.setCpf(cliente.getCpf());
+        clienteExistente.setEndereco(cliente.getEndereco());
+        clienteExistente.setTelefone(cliente.getTelefone());
+        clienteExistente.setEmail(cliente.getEmail());
+        clienteExistente.setDataNascimento(cliente.getDataNascimento());
+
+        Cliente clienteSalvo = clienteService.create(clienteExistente);
+
+        return ResponseEntity.ok(clienteSalvo);
+    }
+    
     // Delete Client
     @DeleteMapping
     public ResponseEntity<Void> deleteById(Long id) {
