@@ -26,7 +26,13 @@ public class ContaBcController {
         List<ContaBancaria> contaBc = contaBcService.getAllContasBc();
         return ResponseEntity.ok(contaBc);
     }
-
+    
+    // Get ContaBancaria ByNúmero
+    @GetMapping("/{id}")
+    public ResponseEntity<ContaBancaria> getContaByNumber(@PathVariable Long numeroConta) {
+        ContaBancaria conta = contaBcService.getContaByNumber(numeroConta);
+        return ResponseEntity.ok(conta);
+    }
     // Criar Conta Para um cliente
     @PostMapping
     public ResponseEntity<ContaBancaria> Create(@RequestBody ContaBancaria contaBancaria) {
@@ -45,12 +51,6 @@ public class ContaBcController {
         return ResponseEntity.ok(contaCriada);
     }
 
-    // Get ContaBancaria ByNúmero
-    @GetMapping("/{id}")
-    public ResponseEntity<ContaBancaria> getContaByNumber(@PathVariable Long numeroConta) {
-        ContaBancaria conta = contaBcService.getContaByNumber(numeroConta);
-        return ResponseEntity.ok(conta);
-    }
 
      @PutMapping("/{id}")
     public ResponseEntity<ContaBancaria> update(@PathVariable Long numeroConta, @RequestBody Cliente cliente ,@RequestBody ContaBancaria contaBancaria) {
@@ -64,5 +64,17 @@ public class ContaBcController {
         
         ContaBancaria contaBancariasalva = contaBcService.createContaBc(contaBancariaexistente);
         return ResponseEntity.ok(contaBancariasalva);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteByNumber(Long numeroConta) {
+        ContaBancaria contaBancaria = contaBcService.getContaByNumber(numeroConta);
+
+        if (contaBancaria == null) {
+            return ResponseEntity.notFound().build();
+        }
+        clienteService.delete(numeroConta);
+
+        return ResponseEntity.noContent().build();
     }
 }
