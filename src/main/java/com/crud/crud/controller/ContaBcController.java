@@ -1,13 +1,16 @@
 package com.crud.crud.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties.Web.Client;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.crud.crud.Cliente;
 import com.crud.crud.ContaBancaria;
+import com.crud.crud.TransacaoBc;
 import com.crud.crud.service.ClienteService;
 import com.crud.crud.service.ContaBcService;
 
@@ -26,13 +29,14 @@ public class ContaBcController {
         List<ContaBancaria> contaBc = contaBcService.getAllContasBc();
         return ResponseEntity.ok(contaBc);
     }
-    
+
     // Get ContaBancaria ByNúmero
     @GetMapping("/{id}")
     public ResponseEntity<ContaBancaria> getContaByNumber(@PathVariable Long numeroConta) {
         ContaBancaria conta = contaBcService.getContaByNumber(numeroConta);
         return ResponseEntity.ok(conta);
     }
+
     // Criar Conta Para um cliente
     @PostMapping
     public ResponseEntity<ContaBancaria> Create(@RequestBody ContaBancaria contaBancaria) {
@@ -51,9 +55,8 @@ public class ContaBcController {
         return ResponseEntity.ok(contaCriada);
     }
 
-
-     @PutMapping("/{id}")
-    public ResponseEntity<ContaBancaria> update(@PathVariable Long numeroConta, @RequestBody Cliente cliente ,@RequestBody ContaBancaria contaBancaria) {
+    @PutMapping("/{id}")
+    public ResponseEntity<ContaBancaria> update(@PathVariable Long numeroConta, @RequestBody Cliente cliente,@RequestBody ContaBancaria contaBancaria) {
         ContaBancaria contaBancariaexistente = contaBcService.getContaByNumber(numeroConta);
 
         if (contaBancariaexistente == null) {
@@ -61,7 +64,7 @@ public class ContaBcController {
         }
 
         contaBancariaexistente.setTipoConta(contaBancaria.getTipoConta());
-        
+
         ContaBancaria contaBancariasalva = contaBcService.createContaBc(contaBancariaexistente);
         return ResponseEntity.ok(contaBancariasalva);
     }
@@ -77,4 +80,9 @@ public class ContaBcController {
 
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/conta-destino/{numeroConta}")
+    public ContaBancaria getContaDestino(@PathVariable Long numeroConta) {
+        return contaBcService.getContaByNumber(numeroConta);
+    }
+    
 }
