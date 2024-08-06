@@ -17,32 +17,58 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    public List<Cliente> getAllClientes() {
+    public List<Cliente> getAll() {
         return clienteRepository.findAll();
     }
-    public Cliente getById (Long id) {
-        return clienteRepository.findById(id).orElse(null);
+
+    public Cliente getById(Long id) {
+        return clienteRepository.findById(id)
+                                .orElse(null);
     }
-    public void delete (Long id) {
-        clienteRepository.deleteById(id);
-    }
-    public Cliente create (Cliente cliente) {
+
+    public Cliente create(Cliente cliente) {
         return clienteRepository.save(cliente);
     }
 
-    public Cliente upCliente( Long id) {
-        Cliente cliente = getById(id);
-        if (cliente != null) {
-            return null;
+    public Cliente update(Long id, Cliente clienteExistente, Cliente clienteNovo) {
+
+        if (clienteNovo.getNome() != null) {
+            clienteExistente.setNome(clienteNovo.getNome());
+        }
+        if (clienteNovo.getCpf() != null) {
+            clienteExistente.setCpf(clienteNovo.getCpf());
+        }
+        if (clienteNovo.getEndereco() != null) {
+            clienteExistente.setEndereco(clienteNovo.getEndereco());
+        }
+        if (clienteNovo.getTelefone() != null) {
+            clienteExistente.setTelefone(clienteNovo.getTelefone());
+        }
+        if (clienteNovo.getEmail() != null) {
+            clienteExistente.setEmail(clienteNovo.getEmail());
+        }
+        if (clienteNovo.getDataNascimento() != null) {
+            clienteExistente.setDataNascimento(clienteNovo.getDataNascimento());
+        }
+        if (clienteNovo.isClienteAtivo() != clienteExistente.isClienteAtivo()) {
+            clienteExistente.setClienteAtivo(clienteNovo.isClienteAtivo());
         }
 
-        cliente.setNome(cliente.getNome());
-        cliente.setCpf(cliente.getCpf());
-        cliente.setEndereco(cliente.getEndereco());
-        cliente.setTelefone(cliente.getTelefone());
-        cliente.setEmail(cliente.getEmail());
-        cliente.setDataNascimento(cliente.getDataNascimento());
+        return clienteRepository.save(clienteExistente);
+    }
+
+    public Cliente delete(Long id) {
+        // Delete anterior
+        clienteRepository.deleteById(id);
+
+        // Delete lógico
+        Cliente cliente = getById(id);
+        cliente.setClienteAtivo(false);
+
         return clienteRepository.save(cliente);
-        
+    }
+
+    public List<Cliente> getAllAtivos() {
+        return clienteRepository.findByClienteAtivoTrue();
     }
 }

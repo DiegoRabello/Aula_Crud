@@ -18,14 +18,21 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
-    // getAll Clientes
+    // Buscar todos os clientes - getAll
     @GetMapping
-    public ResponseEntity<List<Cliente>> getAllClientes() {
-        List<Cliente> clientes = clienteService.getAllClientes();
+    public ResponseEntity<List<Cliente>> getAll() {
+        List<Cliente> clientes = clienteService.getAll();
         return ResponseEntity.ok(clientes);
     }
 
-    // GetById
+    // Buscar todos os clientes ativos
+    @GetMapping("/ativos")
+    public ResponseEntity<List<Cliente>> getAllAtivos() {
+        List<Cliente> clientes = clienteService.getAllAtivos();
+        return ResponseEntity.ok(clientes);
+    }
+    
+    // Buscar um cliente por id - getById
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> getById(@PathVariable Long id) {
         Cliente cliente = clienteService.getById(id);
@@ -36,42 +43,35 @@ public class ClienteController {
         return ResponseEntity.ok(cliente);
     }
 
-    // Create Client
+    // Criar um cliente - create
     @PostMapping
-    public ResponseEntity<Cliente> Create(@RequestBody Cliente cliente) {
+    public ResponseEntity<Cliente> create(@RequestBody Cliente cliente) {
         Cliente clienteSalvo = clienteService.create(cliente);
         return ResponseEntity.ok(clienteSalvo);
     }
+
+    // Atualizar um cliente - update
+    // Combinação do getById e create
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente cliente) {
+    public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente clienteNovo) {
         Cliente clienteExistente = clienteService.getById(id);
 
         if (clienteExistente == null) {
             return ResponseEntity.notFound().build();
         }
-
-        clienteExistente.setNome(cliente.getNome());
-        clienteExistente.setCpf(cliente.getCpf());
-        clienteExistente.setEndereco(cliente.getEndereco());
-        clienteExistente.setTelefone(cliente.getTelefone());
-        clienteExistente.setEmail(cliente.getEmail());
-        clienteExistente.setDataNascimento(cliente.getDataNascimento());
-
-        Cliente clienteSalvo = clienteService.create(clienteExistente);
+        Cliente clienteSalvo = clienteService.update(id, clienteExistente, clienteNovo);
 
         return ResponseEntity.ok(clienteSalvo);
     }
-    
-    // Delete Client
-    @DeleteMapping
-    public ResponseEntity<Void> deleteById(Long id) {
+
+    // Deletar um cliente - delete
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Cliente> delete(@PathVariable Long id) {
         Cliente cliente = clienteService.getById(id);
 
         if (cliente == null) {
             return ResponseEntity.notFound().build();
         }
-        clienteService.delete(id);
-
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(clienteService.delete(id));
     }
 }

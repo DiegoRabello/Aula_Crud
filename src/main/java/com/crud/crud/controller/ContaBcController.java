@@ -17,72 +17,41 @@ import com.crud.crud.service.ContaBcService;
 @RestController
 @RequestMapping("contaBc")
 public class ContaBcController {
-
+   
     @Autowired
-    private ContaBcService contaBcService;
-    @Autowired
-    private ClienteService clienteService;
+    private ContaBcService contaBancariaService;
 
-    // Coletar Todas as Contas
     @GetMapping
-    public ResponseEntity<List<ContaBancaria>> getAllContaBc() {
-        List<ContaBancaria> contaBc = contaBcService.getAllContasBc();
-        return ResponseEntity.ok(contaBc);
+    public ResponseEntity<List<ContaBancaria>> getAll() {
+        return ResponseEntity.ok(contaBancariaService.getAll());
     }
 
-    // Get ContaBancaria ByNúmero
+    
+
     @GetMapping("/{id}")
-    public ResponseEntity<ContaBancaria> getContaByNumber(@PathVariable Long numeroConta) {
-        ContaBancaria conta = contaBcService.getContaByNumber(numeroConta);
-        return ResponseEntity.ok(conta);
+    public ResponseEntity<ContaBancaria> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(contaBancariaService.getById(id));
     }
 
-    // Criar Conta Para um cliente
     @PostMapping
-    public ResponseEntity<ContaBancaria> Create(@RequestBody ContaBancaria contaBancaria) {
-        if (contaBancaria.getCliente() == null || contaBancaria.getCliente().getId() == null) {
-            return ResponseEntity.badRequest().body(null); // ou alguma outra lógica de erro
-        }
-
-        Cliente cliente = clienteService.getById(contaBancaria.getCliente().getId());
-
-        if (cliente == null) {
-            return ResponseEntity.badRequest().body(null); // ou alguma outra lógica de erro
-        }
-        contaBancaria.setCliente(cliente);
-
-        ContaBancaria contaCriada = contaBcService.createContaBc(contaBancaria);
-        return ResponseEntity.ok(contaCriada);
+    public ResponseEntity<ContaBancaria> create(@RequestBody ContaBancaria contaBancaria) {
+        return ResponseEntity.ok(contaBancariaService.create(contaBancaria));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ContaBancaria> update(@PathVariable Long numeroConta, @RequestBody Cliente cliente,@RequestBody ContaBancaria contaBancaria) {
-        ContaBancaria contaBancariaexistente = contaBcService.getContaByNumber(numeroConta);
+    public ResponseEntity<ContaBancaria> update(@PathVariable Long id, @RequestBody ContaBancaria contaNova) {
+        ContaBancaria contaExistente = contaBancariaService.getById(id);
 
-        if (contaBancariaexistente == null) {
+        if (contaExistente == null) {
             return ResponseEntity.notFound().build();
         }
 
-        contaBancariaexistente.setTipoConta(contaBancaria.getTipoConta());
-
-        ContaBancaria contaBancariasalva = contaBcService.createContaBc(contaBancariaexistente);
-        return ResponseEntity.ok(contaBancariasalva);
+        return ResponseEntity.ok(contaBancariaService.update(contaExistente, contaNova));
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteByNumber(Long numeroConta) {
-        ContaBancaria contaBancaria = contaBcService.getContaByNumber(numeroConta);
-
-        if (contaBancaria == null) {
-            return ResponseEntity.notFound().build();
-        }
-        clienteService.delete(numeroConta);
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        contaBancariaService.delete(id);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/conta-destino/{numeroConta}")
-    public ContaBancaria getContaDestino(@PathVariable Long numeroConta) {
-        return contaBcService.getContaByNumber(numeroConta);
-    }
-    
 }

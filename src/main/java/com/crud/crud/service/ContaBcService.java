@@ -6,20 +6,52 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.crud.crud.Cliente;
 import com.crud.crud.ContaBancaria;
+import com.crud.crud.TransacaoBc;
 import com.crud.crud.repository.ClienteRepository;
 import com.crud.crud.repository.ContaBcRepository;
 
 public class ContaBcService {
-     @Autowired
-    private ContaBcRepository contaBcRepository;
+    @Autowired
+    ContaBcRepository contaBancariaRepository;
 
-    public List<ContaBancaria> getAllContasBc() {
-        return contaBcRepository.findAll();
+    ContaBcService(ContaBcRepository contaBancariaRepository) {
+        this.contaBancariaRepository = contaBancariaRepository;
     }
-    public ContaBancaria createContaBc(ContaBancaria contaBancaria) {
-        return contaBcRepository.save(contaBancaria);
+
+    public List<ContaBancaria> getAll() {
+        return contaBancariaRepository.findAll();
     }
-    public ContaBancaria getContaByNumber(Long numeroConta) {
-       return contaBcRepository.findById(numeroConta).orElse(null);
+
+    public ContaBancaria getById(Long id) {
+        return contaBancariaRepository.findById(id).orElse(null);
+    }
+
+    public ContaBancaria create(ContaBancaria contaBancaria) {
+        return contaBancariaRepository.save(contaBancaria);
+    }
+
+    public ContaBancaria update(ContaBancaria contaExistente, ContaBancaria contaNova) {
+
+        contaExistente.setSaldo(contaNova.getSaldo());
+
+        return contaBancariaRepository.save(contaExistente);
+    }
+
+    public ContaBancaria delete(Long id) {
+        ContaBancaria contaBancaria = getById(id);
+        contaBancariaRepository.delete(contaBancaria);
+        return contaBancaria;
+    }
+
+    public boolean temSaldo(TransacaoBc transacao) {
+        // Comprarar o saldo da conta origem com o valor da transacao
+        ContaBancaria conta = getById(transacao.getContaOrigem().getNumeroConta());
+
+        boolean temSaldo = (
+            conta.getSaldo() 
+            >= 
+            transacao.getValor()
+        );
+        return temSaldo;
     }
 }
