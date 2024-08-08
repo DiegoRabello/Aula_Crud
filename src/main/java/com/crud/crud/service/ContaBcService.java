@@ -52,6 +52,6 @@ public class ContaBcService {
             >= 
             transacao.getValor()
         );
-        return temSaldo;
+        return true;
     }
 }

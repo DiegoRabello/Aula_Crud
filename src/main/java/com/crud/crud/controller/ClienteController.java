@@ -8,8 +8,11 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.crud.crud.Cliente;
+import com.crud.crud.dto.ClienteDTO;
+import com.crud.crud.dto.ClienteUpdateDTO;
 import com.crud.crud.repository.ClienteRepository;
 import com.crud.crud.service.ClienteService;
+
 
 @RestController
 @RequestMapping("cliente")
@@ -43,6 +46,17 @@ public class ClienteController {
         return ResponseEntity.ok(cliente);
     }
 
+    @GetMapping("/nomes")
+    public ResponseEntity<List<ClienteDTO>> getClientesDTO() {
+        return ResponseEntity.ok(clienteService.getClientesDTO());
+    }
+
+
+    public String getMethodName(@RequestParam String param) {
+        return new String();
+    }
+    
+
     // Criar um cliente - create
     @PostMapping
     public ResponseEntity<Cliente> create(@RequestBody Cliente cliente) {
@@ -63,6 +77,21 @@ public class ClienteController {
 
         return ResponseEntity.ok(clienteSalvo);
     }
+
+    @PutMapping("/dto/{id}")
+    public ResponseEntity<ClienteUpdateDTO> updateDTO (@PathVariable Long id, @RequestBody ClienteUpdateDTO clienteNovo) {
+        Cliente clienteExistente = clienteService.getById(id);
+
+        if (clienteExistente == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        ClienteUpdateDTO clienteDTO = clienteService.updateDTO(clienteExistente, clienteNovo);
+
+        return ResponseEntity.ok(clienteDTO);
+
+    }
+
 
     // Deletar um cliente - delete
     @DeleteMapping("/{id}")
